@@ -35,6 +35,7 @@ app.post('/', async(req, res) => {
             top_p: 1,
             frequency_penalty: 0.5,
             presence_penalty: 0,
+            // stop: ["\"\"\""]  
         });
 
         res.status(200).send({
@@ -46,5 +47,5 @@ app.post('/', async(req, res) => {
     }
 })
 
-app.listen(50011, () => console.log('Server is running on port http://localhost:50011'));
+app.listen(50011, () => console.log('Server is running on port http://localhost:50011'))
 
