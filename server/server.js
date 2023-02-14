@@ -1,28 +1,20 @@
-import { Configuration, OpenAIApi } from 'openai';
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import { Configuration, OpenAIApi } from 'openai';
 
 dotenv.config();
-process.env.DEBUG = 'express:*';
-
-const app = express();
-
-// Add CORS middleware
-app.use(cors());
-app.use(express.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 const openai = new OpenAIApi(configuration);
+
+const app = express();
+// Add CORS middleware
+app.use(cors());
+app.use(express.json());
 
 app.get('/', async (req, res) => {
   res.status(200).send({
@@ -35,17 +27,18 @@ app.post('/', async (req, res) => {
     const prompt = req.body.prompt;
 
     const response = await openai.createCompletion({
-      model: 'text-davinci-002',
-      prompt: prompt,
+      model: "text-davinci-003",
+      prompt: `${prompt}`,
       temperature: 0.7,
-      maxTokens: 1024,
-      topP: 1,
-      n: 1,
-      stop: '\n',
+      max_tokens: 3000,
+      top_p: 1,
+      frequency_penalty: 0.5,
+      presence_penalty: 0,
+      stop: ["\"\"\""],
     });
 
     res.status(200).send({
-      bot: response.data.choices[0].text.trim(),
+      bot: response.data.choices[0].text
     });
   } catch (error) {
     console.log(error);
@@ -53,4 +46,4 @@ app.post('/', async (req, res) => {
   }
 });
 
-app.listen(process.env.PORT || 50011, () => console.log(`Server is running on port ${process.env.PORT || 50011}`));
+app.listen(50011, () => console.log(`Server is running on port http://localhost:50011`));
